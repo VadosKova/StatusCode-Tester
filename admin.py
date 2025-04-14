@@ -11,3 +11,14 @@ def send_request(data):
         s.send(jsonpickle.encode(data).encode('utf-8'))
         response = s.recv(8192).decode('utf-8')
         return jsonpickle.decode(response)
+
+class AdminPanel:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Admin Panel")
+        self.username = None
+        self.login_screen()
+
+    def clear_widgets(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
