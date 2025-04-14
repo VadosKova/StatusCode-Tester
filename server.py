@@ -30,3 +30,17 @@ class User:
     def get_available_tests(self):
         self.cursor.execute('SELECT ID, Title, Description FROM Tests')
         return self.cursor.fetchall()
+
+    def get_test_questions_and_answers(self, test_id):
+        self.cursor.execute('SELECT ID, QuestionText FROM Questions WHERE TestID = ?', (test_id,))
+        questions = self.cursor.fetchall()
+        question_data = []
+
+        for q in questions:
+            q_id, q_text = q
+            self.cursor.execute('SELECT ID, AnswerText FROM Answers WHERE QuestionID = ?', (q_id,))
+            answers = self.cursor.fetchall()
+            answer_list = [{"id": a[0], "text": a[1]} for a in answers]
+            question_data.append({"id": q_id, "text": q_text, "answers": answer_list})
+
+        return question_data
