@@ -50,3 +50,12 @@ class AdminPanel:
             self.main_menu()
         else:
             messagebox.showerror("Error", res.get("message", "Unknown error"))
+
+    def main_menu(self):
+        self.clear_widgets()
+        Label(self.root, text=f"Welcome, {self.username}", font=('Arial', 16)).pack(pady=10)
+
+        Button(self.root, text="Add Test", command=self.add_test).pack(pady=5)
+        Button(self.root, text="Edit/Delete Tests", command=self.edit_tests).pack(pady=5)
+        Button(self.root, text="View Statistics", command=self.view_stats).pack(pady=5)
+        Button(self.root, text="Logout", command=self.login_screen).pack(pady=10)
