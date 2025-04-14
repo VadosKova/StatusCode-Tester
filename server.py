@@ -129,6 +129,8 @@ def client_request(client):
         action = data.get('action')
         res = {"message": "Unknown action"}
 
+        user = User(username=data.get('username'))
+
         if action == 'register':
             user = User(username=data['username'], email=data['email'], password=data['password'])
             if user.check_username_exists():
@@ -177,6 +179,27 @@ def client_request(client):
                     } for r in results
                 ]
             }
+
+        elif action == 'admin_add_test':
+            if user.is_admin():
+                user.admin_add_test(data['title'], data['description'])
+                res = {"message": "Test added"}
+            else:
+                res = {"message": "Unauthorized"}
+
+        elif action == 'admin_add_question':
+            if user.is_admin():
+                qid = user.admin_add_question(data['test_id'], data['question_text'])
+                res = {"message": "Question added", "question_id": qid}
+            else:
+                res = {"message": "Unauthorized"}
+
+        elif action == 'admin_add_answer':
+            if user.is_admin():
+                user.admin_add_answer(data['question_id'], data['answer_text'], data['is_correct'])
+                res = {"message": "Answer added"}
+            else:
+                res = {"message": "Unauthorized"}
 
         client.send(jsonpickle.encode(res).encode('utf-8'))
     except Exception:
