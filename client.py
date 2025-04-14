@@ -42,3 +42,7 @@ class StatusCodeTester:
         self.correct_answers = 0
 
         self.start_screen()
+
+    def clear_widgets(self):
+        for widget in self.root.winfo_children():
+            widget.destroy()
