@@ -1,5 +1,5 @@
 from tkinter import *
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 import socket
 import jsonpickle
 
@@ -59,3 +59,16 @@ class AdminPanel:
         Button(self.root, text="Edit/Delete Tests", command=self.edit_tests).pack(pady=5)
         Button(self.root, text="View Statistics", command=self.view_stats).pack(pady=5)
         Button(self.root, text="Logout", command=self.login_screen).pack(pady=10)
+
+    def add_test(self):
+        title = simpledialog.askstring("Test Title", "Enter title:")
+        description = simpledialog.askstring("Description", "Enter description:")
+        if title and description:
+            res = send_request({
+                "action": "admin_add_test",
+                "username": self.username,
+                "title": title,
+                "description": description
+            })
+            if res.get("message") == "Test added":
+                messagebox.showinfo("Success", "Test added")
