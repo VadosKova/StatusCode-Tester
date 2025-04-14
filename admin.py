@@ -72,3 +72,39 @@ class AdminPanel:
             })
             if res.get("message") == "Test added":
                 messagebox.showinfo("Success", "Test added")
+
+    def edit_tests(self):
+        self.clear_widgets()
+        Label(self.root, text="Edit/Delete Tests", font=('Arial', 16)).pack(pady=10)
+        tests = send_request({
+            "action": "get_tests",
+            "username": self.username
+        }).get("tests", [])
+
+        for test in tests:
+            frame = Frame(self.root)
+            frame.pack(fill='x', pady=2)
+
+            Label(frame, text=f"{test['title']} - {test['description']}", anchor='w').pack(side=LEFT, fill='x',
+                                                                                           expand=True)
+
+            Button(frame, text="Edit", command=lambda t=test: self.edit_test(t)).pack(side=LEFT, padx=5)
+            Button(frame, text="Delete", command=lambda t=test: self.delete_test(t['id'])).pack(side=LEFT)
+
+        Button(self.root, text="Back", command=self.main_menu).pack(pady=10)
+
+    def edit_test(self, test):
+        new_title = simpledialog.askstring("Edit Title", "Enter new title:", initialvalue=test["title"])
+        new_description = simpledialog.askstring("Edit Description", "Enter new description:",
+                                                 initialvalue=test["description"])
+        if new_title and new_description:
+            res = send_request({
+                "action": "admin_edit_test",
+                "username": self.username,
+                "test_id": test["id"],
+                "title": new_title,
+                "description": new_description
+            })
+            if res.get("message") == "Test updated":
+                messagebox.showinfo("Success", "Test updated")
+        self.edit_test_questions(test["id"])
