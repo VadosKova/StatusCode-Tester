@@ -26,3 +26,7 @@ class User:
     def check_username_exists(self):
         self.cursor.execute('SELECT * FROM Users WHERE Username = ?', (self.username,))
         return self.cursor.fetchone() is not None
+
+    def get_available_tests(self):
+        self.cursor.execute('SELECT ID, Title, Description FROM Tests')
+        return self.cursor.fetchall()
