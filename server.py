@@ -96,6 +96,15 @@ def client_request(client):
             else:
                 res = {"message": "Invalid credentials"}
 
+        elif action == 'get_tests':
+            user = User(username=data['username'])
+            tests = user.get_available_tests()
+            res = {"tests": [{"id": t.ID, "title": t.Title, "description": t.Description} for t in tests]}
+
+        elif action == 'get_test_data':
+            user = User(username=data['username'])
+            test_data = user.get_test_questions_and_answers(data['test_id'])
+            res = {"questions": test_data}
     except Exception:
         error_response = {"error": "Error with client"}
         client.send(jsonpickle.encode(error_response).encode('utf-8'))
