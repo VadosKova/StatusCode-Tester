@@ -58,3 +58,15 @@ class User:
         for a in answers:
             self.cursor.execute('INSERT INTO AnswerLogs (ResultId, UserId, QuestionId, AnswerId, IsCorrect) VALUES (?, ?, ?, ?, ?)', (result_id, user_id, a['question_id'], a['answer_id'], a['is_correct']))
         self.conn.commit()
+
+    def get_user_results(self):
+        self.cursor.execute('SELECT ID FROM Users WHERE Username = ?', (self.username,))
+        user_row = self.cursor.fetchone()
+
+        if not user_row:
+            return []
+
+        user_id = user_row[0]
+
+        self.cursor.execute('SELECT T.Title, R.Score, R.DateTaken FROM Results R JOIN Tests T ON R.TestId = T.ID WHERE R.UserId = ? ORDER BY R.DateTaken DESC', (user_id,))
+        return self.cursor.fetchall()
