@@ -96,6 +96,22 @@ class User:
         self.cursor.execute('SELECT U.Username, T.Title, R.Score, R.DateTaken, Q.QuestionText, A.AnswerText, L.IsCorrect FROM AnswerLogs L JOIN Results R ON L.ResultId = R.ID JOIN Users U ON L.UserId = U.ID JOIN Questions Q ON L.QuestionId = Q.ID JOIN Answers A ON L.AnswerId = A.ID JOIN Tests T ON R.TestId = T.ID ORDER BY R.DateTaken DESC')
         return self.cursor.fetchall()
 
+    def admin_edit_test(self, test_id, title, description):
+        self.cursor.execute('UPDATE Tests SET Title = ?, Description = ? WHERE ID = ?', (title, description, test_id))
+        self.conn.commit()
+
+    def admin_edit_question(self, question_id, question_text):
+        self.cursor.execute('UPDATE Questions SET QuestionText = ? WHERE ID = ?', (question_text, question_id))
+        self.conn.commit()
+
+    def admin_edit_answer(self, answer_id, answer_text, is_correct):
+        self.cursor.execute(
+            'UPDATE Answers SET AnswerText = ?, IsCorrect = ? WHERE ID = ?',
+            (answer_text, is_correct, answer_id)
+        )
+        self.conn.commit()
+
+
     def close_connection(self):
         self.conn.close()
 
