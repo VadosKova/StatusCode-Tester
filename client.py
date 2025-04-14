@@ -126,3 +126,28 @@ class StatusCodeTester:
                         bg='#f0f0f0').pack(anchor='w', padx=20)
 
         Button(self.root, text="Submit", command=self.check_answer).pack(pady=10)
+
+    def check_answer(self):
+        selected = self.selected_option.get()
+        if selected == -1:
+            messagebox.showwarning("Warning", "Please select an answer.")
+            return
+
+        questions = EXAMPLE_QUESTIONS[self.current_test["id"]]
+        correct_index = questions[self.current_question_index]["answer"]
+
+        if selected == correct_index:
+            self.correct_answers += 1
+
+        self.current_question_index += 1
+        self.show_question()
+
+    def show_result(self):
+        self.clear_widgets()
+        total = len(EXAMPLE_QUESTIONS[self.current_test["id"]])
+        result_text = f"You answered {self.correct_answers} out of {total} questions correctly."
+
+        Label(self.root, text="Test Completed", font=self.header_font, bg='#f0f0f0').pack(pady=20)
+        Label(self.root, text=result_text, font=self.label_font, bg='#f0f0f0').pack(pady=10)
+
+        Button(self.root, text="Back to Menu", font=self.button_font, command=self.main_menu).pack(pady=10)
