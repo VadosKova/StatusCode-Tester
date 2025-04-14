@@ -76,6 +76,22 @@ class User:
         self.cursor.execute('SELECT T.Title, R.Score, R.DateTaken FROM Results R JOIN Tests T ON R.TestId = T.ID WHERE R.UserId = ? ORDER BY R.DateTaken DESC', (user_id,))
         return self.cursor.fetchall()
 
+    def admin_add_test(self, title, description):
+        self.cursor.execute('INSERT INTO Tests (Title, Description) VALUES (?, ?)', (title, description))
+        self.conn.commit()
+
+    def admin_add_question(self, test_id, question_text):
+        self.cursor.execute('INSERT INTO Questions (TestID, QuestionText) VALUES (?, ?)', (test_id, question_text))
+        self.conn.commit()
+        return self.cursor.execute('SELECT SCOPE_IDENTITY()').fetchone()[0]
+
+    def admin_add_answer(self, question_id, answer_text, is_correct):
+        self.cursor.execute(
+            'INSERT INTO Answers (QuestionID, AnswerText, IsCorrect) VALUES (?, ?, ?)',
+            (question_id, answer_text, is_correct)
+        )
+        self.conn.commit()
+
     def close_connection(self):
         self.conn.close()
 
