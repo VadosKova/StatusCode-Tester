@@ -103,3 +103,26 @@ class StatusCodeTester:
         self.current_question_index = 0
         self.correct_answers = 0
         self.show_question()
+
+    def show_question(self):
+        self.clear_widgets()
+        questions = EXAMPLE_QUESTIONS[self.current_test["id"]]
+
+        if self.current_question_index >= len(questions):
+            self.show_result()
+            return
+
+        q = questions[self.current_question_index]
+
+        Label(self.root, text=f"{self.current_test['title']} - Question {self.current_question_index + 1}",
+              font=self.header_font, bg='#f0f0f0').pack(pady=10)
+
+        Label(self.root, text=q["question"], font=self.label_font, bg='#f0f0f0').pack(pady=5)
+
+        self.selected_option = IntVar(value=-1)
+
+        for i, option in enumerate(q["options"]):
+            Radiobutton(self.root, text=option, variable=self.selected_option, value=i,
+                        bg='#f0f0f0').pack(anchor='w', padx=20)
+
+        Button(self.root, text="Submit", command=self.check_answer).pack(pady=10)
