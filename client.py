@@ -210,3 +210,13 @@ class StatusCodeTester:
             self.start_screen()
         else:
             messagebox.showerror("Error", response.get("message", "Registration failed"))
+
+    def logout(self):
+        self.current_user = None
+        self.start_screen()
+
+
+root = Tk()
+app = StatusCodeTester(root)
+
+root.mainloop()
