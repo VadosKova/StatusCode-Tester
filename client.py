@@ -151,3 +151,22 @@ class StatusCodeTester:
         Label(self.root, text=result_text, font=self.label_font, bg='#f0f0f0').pack(pady=10)
 
         Button(self.root, text="Back to Menu", font=self.button_font, command=self.main_menu).pack(pady=10)
+
+    def send_request(self, data):
+        try:
+            client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            client.connect((IP, PORT))
+            client.send(jsonpickle.encode(data).encode('utf-8'))
+
+            response = client.recv(4096).decode('utf-8')
+            client.close()
+
+            if response:
+                return jsonpickle.decode(response)
+            return {"error": "Empty response from server"}
+        except ConnectionRefusedError:
+            messagebox.showerror("Error", "No connection")
+            return {"error": "Connection refused"}
+        except Exception:
+            messagebox.showerror("Error", "Connection error")
+            return {"error": "Error with server"}
