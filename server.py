@@ -201,6 +201,25 @@ def client_request(client):
             else:
                 res = {"message": "Unauthorized"}
 
+        elif action == 'admin_get_statistics':
+            if user.is_admin():
+                stats = user.admin_get_statistics()
+                res = {
+                    "statistics": [
+                        {
+                            "username": s.Username,
+                            "test": s.Title,
+                            "score": s.Score,
+                            "date": s.DateTaken.strftime('%Y-%m-%d %H:%M:%S'),
+                            "question": s.QuestionText,
+                            "answer": s.AnswerText,
+                            "correct": bool(s.IsCorrect)
+                        } for s in stats
+                    ]
+                }
+            else:
+                res = {"message": "Unauthorized"}
+
         client.send(jsonpickle.encode(res).encode('utf-8'))
     except Exception:
         error_response = {"error": "Error with client"}
