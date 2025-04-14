@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import messagebox
 import socket
 import jsonpickle
 
@@ -22,3 +23,30 @@ class AdminPanel:
     def clear_widgets(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
+    def login_screen(self):
+        self.clear_widgets()
+        Label(self.root, text="Admin Authorization", font=('Arial', 18)).pack(pady=10)
+        Label(self.root, text="Username").pack()
+        self.username_entry = Entry(self.root)
+        self.username_entry.pack()
+        Label(self.root, text="Password").pack()
+        self.password_entry = Entry(self.root, show='*')
+        self.password_entry.pack()
+        Button(self.root, text="Login", command=self.login).pack(pady=10)
+
+    def login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        res = send_request({
+            "action": "admin_login",
+            "username": username,
+            "password": password
+        })
+
+        if res.get("message") == "Admin login successful":
+            self.username = username
+            self.main_menu()
+        else:
+            messagebox.showerror("Error", res.get("message", "Unknown error"))
