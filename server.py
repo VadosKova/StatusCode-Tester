@@ -92,6 +92,10 @@ class User:
         )
         self.conn.commit()
 
+    def admin_get_statistics(self):
+        self.cursor.execute('SELECT U.Username, T.Title, R.Score, R.DateTaken, Q.QuestionText, A.AnswerText, L.IsCorrect FROM AnswerLogs L JOIN Results R ON L.ResultId = R.ID JOIN Users U ON L.UserId = U.ID JOIN Questions Q ON L.QuestionId = Q.ID JOIN Answers A ON L.AnswerId = A.ID JOIN Tests T ON R.TestId = T.ID ORDER BY R.DateTaken DESC')
+        return self.cursor.fetchall()
+
     def close_connection(self):
         self.conn.close()
 
