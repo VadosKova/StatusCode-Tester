@@ -97,3 +97,9 @@ class StatusCodeTester:
                    command=lambda t=test: self.start_test(t)).pack(pady=5)
 
         Button(self.root, text="Logout", font=self.button_font, command=self.logout).pack(pady=10)
+
+    def start_test(self, test):
+        self.current_test = test
+        self.current_question_index = 0
+        self.correct_answers = 0
+        self.show_question()
