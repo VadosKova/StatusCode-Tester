@@ -44,3 +44,17 @@ class User:
             question_data.append({"id": q_id, "text": q_text, "answers": answer_list})
 
         return question_data
+
+    def save_test_result(self, test_id, score, answers):
+        self.cursor.execute('SELECT ID FROM Users WHERE Username = ?', (self.username,))
+        user_id = self.cursor.fetchone()[0]
+
+        self.cursor.execute('INSERT INTO Results (UserId, TestId, Score, DateTaken) VALUES (?, ?, ?, GETDATE())',(user_id, test_id, score))
+        self.conn.commit()
+
+        self.cursor.execute('SELECT TOP 1 ID FROM Results WHERE UserId = ? ORDER BY DateTaken DESC', (user_id,))
+        result_id = self.cursor.fetchone()[0]
+
+        for a in answers:
+            self.cursor.execute('INSERT INTO AnswerLogs (ResultId, UserId, QuestionId, AnswerId, IsCorrect) VALUES (?, ?, ?, ?, ?)', (result_id, user_id, a['question_id'], a['answer_id'], a['is_correct']))
+        self.conn.commit()
