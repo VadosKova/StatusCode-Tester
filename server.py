@@ -89,6 +89,13 @@ def client_request(client):
                 user.register_user()
                 res = {"message": "Registration successful"}
 
+        elif action == 'login':
+            user = User(username=data['username'])
+            if user.check_login(data['password']):
+                res = {"message": "Login successful"}
+            else:
+                res = {"message": "Invalid credentials"}
+
     except Exception:
         error_response = {"error": "Error with client"}
         client.send(jsonpickle.encode(error_response).encode('utf-8'))
