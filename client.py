@@ -85,3 +85,15 @@ class StatusCodeTester:
 
         Button(self.root, text="Register", font=self.button_font, command=self.register).pack(pady=10)
         Button(self.root, text="Back", font=self.button_font, command=self.start_screen).pack()
+
+    def main_menu(self):
+        self.clear_widgets()
+        Label(self.root, text=f"Welcome, {self.current_user}!", font=self.header_font, bg='#f0f0f0').pack(pady=20)
+
+        Label(self.root, text="Available Tests:", font=self.label_font, bg='#f0f0f0').pack(pady=10)
+
+        for test in EXAMPLE_TESTS:
+            Button(self.root, text=test['title'], font=self.button_font,
+                   command=lambda t=test: self.start_test(t)).pack(pady=5)
+
+        Button(self.root, text="Logout", font=self.button_font, command=self.logout).pack(pady=10)
