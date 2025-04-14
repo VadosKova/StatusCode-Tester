@@ -12,6 +12,11 @@ class User:
         self.conn = pyodbc.connect(self.connection_string)
         self.cursor = self.conn.cursor()
 
+    def is_admin(self):
+        self.cursor.execute('SELECT IsAdmin FROM Users WHERE Username = ?', (self.username,))
+        result = self.cursor.fetchone()
+        return result and result[0] == 1
+
     def register_user(self):
         self.cursor.execute('INSERT INTO Users (Username, Email, Password) VALUES (?, ?, ?)',(self.username, self.email, self.password))
         self.conn.commit()
