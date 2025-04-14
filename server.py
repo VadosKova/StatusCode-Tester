@@ -249,8 +249,6 @@ def client_request(client):
                 res = {"message": "Unauthorized"}
 
         client.send(jsonpickle.encode(res).encode('utf-8'))
-
-        client.send(jsonpickle.encode(res).encode('utf-8'))
     except Exception:
         error_response = {"error": "Error with client"}
         client.send(jsonpickle.encode(error_response).encode('utf-8'))
