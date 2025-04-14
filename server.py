@@ -70,3 +70,27 @@ class User:
 
         self.cursor.execute('SELECT T.Title, R.Score, R.DateTaken FROM Results R JOIN Tests T ON R.TestId = T.ID WHERE R.UserId = ? ORDER BY R.DateTaken DESC', (user_id,))
         return self.cursor.fetchall()
+
+    def close_connection(self):
+        self.conn.close()
+
+def client_request(client):
+    try:
+        req = client.recv(4096).decode('utf-8')
+        data = jsonpickle.decode(req)
+        action = data.get('action')
+        res = {"message": "Unknown action"}
+
+        if action == 'register':
+            user = User(username=data['username'], email=data['email'], password=data['password'])
+            if user.check_username_exists():
+                res = {"message": "Username already registered"}
+            else:
+                user.register_user()
+                res = {"message": "Registration successful"}
+
+    except Exception:
+        error_response = {"error": "Error with client"}
+        client.send(jsonpickle.encode(error_response).encode('utf-8'))
+    finally:
+        client.close()
