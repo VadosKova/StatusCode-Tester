@@ -111,6 +111,13 @@ class User:
         )
         self.conn.commit()
 
+    def admin_delete_test(self, test_id):
+        self.cursor.execute('DELETE FROM Answers WHERE QuestionID IN (SELECT ID FROM Questions WHERE TestID = ?)',
+                            (test_id,))
+        self.cursor.execute('DELETE FROM Questions WHERE TestID = ?', (test_id,))
+        self.cursor.execute('DELETE FROM Results WHERE TestId = ?', (test_id,))
+        self.cursor.execute('DELETE FROM Tests WHERE ID = ?', (test_id,))
+        self.conn.commit()
 
     def close_connection(self):
         self.conn.close()
