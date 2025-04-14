@@ -140,7 +140,8 @@ def client_request(client):
         elif action == 'login':
             user = User(username=data['username'])
             if user.check_login(data['password']):
-                res = {"message": "Login successful"}
+                is_admin = user.is_admin()
+                res = {"message": "Login successful", "is_admin": is_admin}
             else:
                 res = {"message": "Invalid credentials"}
 
