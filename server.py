@@ -22,3 +22,7 @@ class User:
         if result:
             return result[0] == input_password
         return False
+
+    def check_username_exists(self):
+        self.cursor.execute('SELECT * FROM Users WHERE Username = ?', (self.username,))
+        return self.cursor.fetchone() is not None
