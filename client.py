@@ -170,3 +170,23 @@ class StatusCodeTester:
         except Exception:
             messagebox.showerror("Error", "Connection error")
             return {"error": "Error with server"}
+
+    def login(self):
+        username = self.username_entry.get()
+        password = self.password_entry.get()
+
+        if not username or not password:
+            messagebox.showerror("Error", "Enter username and password")
+            return
+
+        response = self.send_request({
+            "action": "login",
+            "username": username,
+            "password": password
+        })
+
+        if response.get("message") == "Login successful":
+            self.current_user = username
+            self.main_menu()
+        else:
+            messagebox.showerror("Error", response.get("message", "Login failed"))
