@@ -241,6 +241,14 @@ def client_request(client):
             else:
                 res = {"message": "Unauthorized"}
 
+        elif action == 'admin_delete_test':
+            if user.is_admin():
+                user.admin_delete_test(data['test_id'])
+                res = {"message": "Test deleted"}
+            else:
+                res = {"message": "Unauthorized"}
+
+        client.send(jsonpickle.encode(res).encode('utf-8'))
 
         client.send(jsonpickle.encode(res).encode('utf-8'))
     except Exception:
