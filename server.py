@@ -220,6 +220,28 @@ def client_request(client):
             else:
                 res = {"message": "Unauthorized"}
 
+        elif action == 'admin_edit_test':
+            if user.is_admin():
+                user.admin_edit_test(data['test_id'], data['title'], data['description'])
+                res = {"message": "Test updated"}
+            else:
+                res = {"message": "Unauthorized"}
+
+        elif action == 'admin_edit_question':
+            if user.is_admin():
+                user.admin_edit_question(data['question_id'], data['question_text'])
+                res = {"message": "Question updated"}
+            else:
+                res = {"message": "Unauthorized"}
+
+        elif action == 'admin_edit_answer':
+            if user.is_admin():
+                user.admin_edit_answer(data['answer_id'], data['answer_text'], data['is_correct'])
+                res = {"message": "Answer updated"}
+            else:
+                res = {"message": "Unauthorized"}
+
+
         client.send(jsonpickle.encode(res).encode('utf-8'))
     except Exception:
         error_response = {"error": "Error with client"}
