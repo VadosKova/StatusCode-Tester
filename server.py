@@ -105,6 +105,16 @@ def client_request(client):
             user = User(username=data['username'])
             test_data = user.get_test_questions_and_answers(data['test_id'])
             res = {"questions": test_data}
+
+        elif action == 'submit_test':
+            user = User(username=data['username'])
+            test_id = data['test_id']
+            answers = data['answers']
+            correct_count = sum(1 for a in answers if a['is_correct'])
+            total = len(answers)
+            score = round((correct_count / total) * 100, 2)
+            user.save_test_result(test_id, score, answers)
+            res = {"message": "Test submitted", "score": score}
     except Exception:
         error_response = {"error": "Error with client"}
         client.send(jsonpickle.encode(error_response).encode('utf-8'))
