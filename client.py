@@ -46,3 +46,18 @@ class StatusCodeTester:
     def clear_widgets(self):
         for widget in self.root.winfo_children():
             widget.destroy()
+
+    def start_screen(self):
+        self.clear_widgets()
+        Label(self.root, text="StatusCode Tester", font=self.header_font, bg='#f0f0f0').pack(pady=20)
+
+        Label(self.root, text="Username:", font=self.label_font, bg='#f0f0f0').pack()
+        self.username_entry = Entry(self.root)
+        self.username_entry.pack()
+
+        Label(self.root, text="Password:", font=self.label_font, bg='#f0f0f0').pack()
+        self.password_entry = Entry(self.root, show="*")
+        self.password_entry.pack()
+
+        Button(self.root, text="Login", font=self.button_font, command=self.login).pack(pady=10)
+        Button(self.root, text="Register", font=self.button_font, command=self.register_screen).pack()
