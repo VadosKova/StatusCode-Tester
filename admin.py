@@ -180,3 +180,13 @@ class AdminPanel:
         })
         messagebox.showinfo("Success", "Answer updated")
         self.edit_tests()
+
+    def delete_test(self, test_id):
+        if messagebox.askyesno("Confirm", "Are you sure?"):
+            send_request({
+                "action": "admin_delete_test",
+                "username": self.username,
+                "test_id": test_id
+            })
+            messagebox.showinfo("Deleted", "Test deleted")
+            self.edit_tests()
