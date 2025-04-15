@@ -6,25 +6,6 @@ import jsonpickle
 IP = '127.0.0.1'
 PORT = 4000
 
-EXAMPLE_TESTS = [
-    {"id": 1, "title": "HTTP Status Codes", "description": "Test your knowledge on HTTP codes."}
-]
-
-EXAMPLE_QUESTIONS = {
-    1: [
-        {
-            "question": "Что означает статус код 200?",
-            "options": ["Bad Request", "OK", "Not Found", "Forbidden"],
-            "answer": 1
-        },
-        {
-            "question": "Что означает статус код 404?",
-            "options": ["OK", "Created", "Not Found", "Unauthorized"],
-            "answer": 2
-        }
-    ]
-}
-
 class StatusCodeTester:
     def __init__(self, root):
         self.root = root
@@ -40,6 +21,8 @@ class StatusCodeTester:
         self.current_test = None
         self.current_question_index = 0
         self.correct_answers = 0
+        self.tests = []
+        self.questions = {}
 
         self.start_screen()
 
@@ -92,9 +75,14 @@ class StatusCodeTester:
 
         Label(self.root, text="Available Tests:", font=self.label_font, bg='#f0f0f0').pack(pady=10)
 
-        for test in EXAMPLE_TESTS:
-            Button(self.root, text=test['title'], font=self.button_font,
-                   command=lambda t=test: self.start_test(t)).pack(pady=5)
+        response = self.send_request({"action": "get_tests"})
+        if response.get("status") == "ok":
+            self.tests = response.get("tests", [])
+            for test in self.tests:
+                Button(self.root, text=test['title'], font=self.button_font,
+                       command=lambda t=test: self.start_test(t)).pack(pady=5)
+        else:
+            messagebox.showerror("Error", response.get("message", "Failed to load"))
 
         Button(self.root, text="Logout", font=self.button_font, command=self.logout).pack(pady=10)
 
@@ -102,17 +90,26 @@ class StatusCodeTester:
         self.current_test = test
         self.current_question_index = 0
         self.correct_answers = 0
-        self.show_question()
+
+        response = self.send_request({
+            "action": "get_questions",
+            "test_id": test["id"]
+        })
+
+        if response.get("status") == "ok":
+            self.questions = response.get("questions", [])
+            self.show_question()
+        else:
+            messagebox.showerror("Error", response.get("message", "Failed to load questions"))
 
     def show_question(self):
         self.clear_widgets()
-        questions = EXAMPLE_QUESTIONS[self.current_test["id"]]
 
-        if self.current_question_index >= len(questions):
+        if self.current_question_index >= len(self.questions):
             self.show_result()
             return
 
-        q = questions[self.current_question_index]
+        q = self.questions[self.current_question_index]
 
         Label(self.root, text=f"{self.current_test['title']} - Question {self.current_question_index + 1}",
               font=self.header_font, bg='#f0f0f0').pack(pady=10)
@@ -133,8 +130,7 @@ class StatusCodeTester:
             messagebox.showwarning("Warning", "Please select an answer.")
             return
 
-        questions = EXAMPLE_QUESTIONS[self.current_test["id"]]
-        correct_index = questions[self.current_question_index]["answer"]
+        correct_index = self.questions[self.current_question_index]["answer"]
 
         if selected == correct_index:
             self.correct_answers += 1
@@ -144,7 +140,7 @@ class StatusCodeTester:
 
     def show_result(self):
         self.clear_widgets()
-        total = len(EXAMPLE_QUESTIONS[self.current_test["id"]])
+        total = len(self.questions)
         result_text = f"You answered {self.correct_answers} out of {total} questions correctly."
 
         Label(self.root, text="Test Completed", font=self.header_font, bg='#f0f0f0').pack(pady=20)
