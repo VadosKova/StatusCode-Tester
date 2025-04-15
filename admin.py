@@ -131,3 +131,27 @@ class AdminPanel:
 
         Button(self.root, text="Add Question", command=lambda: self.add_question(test_id)).pack(pady=5)
         Button(self.root, text="Back", command=self.edit_tests).pack(pady=5)
+
+    def add_question(self, test_id):
+        q_text = simpledialog.askstring("New Question", "Enter question text:")
+        if q_text:
+            res = send_request({
+                "action": "admin_add_question",
+                "username": self.username,
+                "test_id": test_id,
+                "question_text": q_text
+            })
+            q_id = res.get("question_id")
+            if q_id:
+                for _ in range(4):
+                    a_text = simpledialog.askstring("Answer", "Enter answer text:")
+                    is_correct = messagebox.askyesno("Correct?", f"Is this the correct answer: {a_text}?")
+                    send_request({
+                        "action": "admin_add_answer",
+                        "username": self.username,
+                        "question_id": q_id,
+                        "answer_text": a_text,
+                        "is_correct": is_correct
+                    })
+                messagebox.showinfo("Success", "Question and answers added")
+                self.edit_test_questions(test_id)
