@@ -190,3 +190,26 @@ class AdminPanel:
             })
             messagebox.showinfo("Deleted", "Test deleted")
             self.edit_tests()
+
+    def view_statistics(self):
+        self.clear_widgets()
+        Label(self.root, text="Statistics", font=('Arial', 16)).pack(pady=10)
+        res = send_request({
+            "action": "admin_get_statistics",
+            "username": self.username
+        })
+
+        stats = res.get("statistics", [])
+        for stat in stats:
+            Label(
+                self.root,
+                text=f"{stat['date']} | {stat['username']} | {stat['test']} | {stat['question']} | {stat['answer']} | {'Correct' if stat['correct'] else 'Wrong'}"
+            ).pack(anchor='w', padx=10)
+
+        Button(self.root, text="Back", command=self.main_menu).pack(pady=10)
+
+
+root = Tk()
+app = AdminPanel(root)
+
+root.mainloop()
