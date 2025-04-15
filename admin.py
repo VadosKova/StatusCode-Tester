@@ -155,3 +155,28 @@ class AdminPanel:
                     })
                 messagebox.showinfo("Success", "Question and answers added")
                 self.edit_test_questions(test_id)
+
+    def edit_question(self, question):
+        new_text = simpledialog.askstring("Edit Question", "Enter new question text:", initialvalue=question['text'])
+        if new_text:
+            send_request({
+                "action": "admin_edit_question",
+                "username": self.username,
+                "question_id": question["id"],
+                "question_text": new_text
+            })
+            messagebox.showinfo("Success", "Question updated")
+            self.edit_test_questions(question['id'])
+
+    def edit_answer(self, answer):
+        new_text = simpledialog.askstring("Edit Answer", "Enter new answer text:", initialvalue=answer['text'])
+        is_correct = messagebox.askyesno("Correct?", f"Is this the correct answer?")
+        send_request({
+            "action": "admin_edit_answer",
+            "username": self.username,
+            "answer_id": answer["id"],
+            "answer_text": new_text,
+            "is_correct": is_correct
+        })
+        messagebox.showinfo("Success", "Answer updated")
+        self.edit_tests()
