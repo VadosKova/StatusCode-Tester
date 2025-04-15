@@ -40,7 +40,7 @@ class AdminPanel:
         password = self.password_entry.get()
 
         res = send_request({
-            "action": "admin_login",
+            "action": "login",
             "username": username,
             "password": password
         })
