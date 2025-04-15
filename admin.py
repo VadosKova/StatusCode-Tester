@@ -85,8 +85,7 @@ class AdminPanel:
             frame = Frame(self.root)
             frame.pack(fill='x', pady=2)
 
-            Label(frame, text=f"{test['title']} - {test['description']}", anchor='w').pack(side=LEFT, fill='x',
-                                                                                           expand=True)
+            Label(frame, text=f"{test['title']} - {test['description']}", anchor='w').pack(side=LEFT, fill='x', expand=True)
 
             Button(frame, text="Edit", command=lambda t=test: self.edit_test(t)).pack(side=LEFT, padx=5)
             Button(frame, text="Delete", command=lambda t=test: self.delete_test(t['id'])).pack(side=LEFT)
@@ -95,8 +94,7 @@ class AdminPanel:
 
     def edit_test(self, test):
         new_title = simpledialog.askstring("Edit Title", "Enter new title:", initialvalue=test["title"])
-        new_description = simpledialog.askstring("Edit Description", "Enter new description:",
-                                                 initialvalue=test["description"])
+        new_description = simpledialog.askstring("Edit Description", "Enter new description:", initialvalue=test["description"])
         if new_title and new_description:
             res = send_request({
                 "action": "admin_edit_test",
@@ -108,3 +106,28 @@ class AdminPanel:
             if res.get("message") == "Test updated":
                 messagebox.showinfo("Success", "Test updated")
         self.edit_test_questions(test["id"])
+
+    def edit_test_questions(self, test_id):
+        self.clear_widgets()
+        Label(self.root, text="Edit Questions", font=('Arial', 14)).pack(pady=10)
+        test_data = send_request({
+            "action": "get_test_data",
+            "username": self.username,
+            "test_id": test_id
+        }).get("questions", [])
+
+        for question in test_data:
+            q_frame = Frame(self.root)
+            q_frame.pack(fill='x', pady=2)
+
+            Label(q_frame, text=f"Q: {question['text']}", anchor='w').pack(side=LEFT, expand=True)
+            Button(q_frame, text="Edit", command=lambda q=question: self.edit_question(q)).pack(side=LEFT, padx=2)
+
+            for answer in question['answers']:
+                a_frame = Frame(self.root)
+                a_frame.pack(fill='x', padx=20)
+                Label(a_frame, text=f"A: {answer['text']}", anchor='w').pack(side=LEFT, expand=True)
+                Button(a_frame, text="Edit", command=lambda a=answer: self.edit_answer(a)).pack(side=LEFT, padx=2)
+
+        Button(self.root, text="Add Question", command=lambda: self.add_question(test_id)).pack(pady=5)
+        Button(self.root, text="Back", command=self.edit_tests).pack(pady=5)
