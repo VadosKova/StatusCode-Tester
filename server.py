@@ -2,6 +2,7 @@ import socket
 import jsonpickle
 import pyodbc
 import logging
+import random
 
 class User:
     def __init__(self, username=None, email=None, password=None):
@@ -47,8 +48,10 @@ class User:
             self.cursor.execute('SELECT ID, AnswerText FROM Answers WHERE QuestionID = ?', (q_id,))
             answers = self.cursor.fetchall()
             answer_list = [{"id": a[0], "text": a[1]} for a in answers]
+            random.shuffle(answer_list)
             question_data.append({"id": q_id, "text": q_text, "answers": answer_list})
 
+        random.shuffle(question_data)
         return question_data
 
     def is_answer_correct(self, answer_id):
